@@ -9,7 +9,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.htmlparser.Node;
 import org.htmlparser.NodeFilter;
 import org.htmlparser.Parser;
 import org.htmlparser.Tag;
@@ -17,11 +16,9 @@ import org.htmlparser.filters.AndFilter;
 import org.htmlparser.filters.HasAttributeFilter;
 import org.htmlparser.filters.HasParentFilter;
 import org.htmlparser.filters.NodeClassFilter;
-import org.htmlparser.filters.OrFilter;
 import org.htmlparser.filters.TagNameFilter;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.lexer.Page;
-import org.htmlparser.nodes.TagNode;
 import org.htmlparser.tags.Div;
 import org.htmlparser.tags.LinkTag;
 import org.htmlparser.tags.Span;
@@ -71,8 +68,13 @@ public class ClientWithResponseHandler {
             NodeList data = parser.extractAllNodesThatMatch(filter);
 
             //System.out.println(data.toHtml());
-            for(int i = 0; i < data.size(); i++){
-                //data.
+            DataVisitor visitor = new DataVisitor();
+            for (int i = 0; i < data.size(); i++) {
+                visitor.visitTag((Tag)data.elementAt(i));
+            }
+
+            for(DataEntity de : visitor.getData()){
+                System.out.printf("%s, Hotelka: %s, ID: %s\n", de.title, de.yaHachuuu, de.idref);
             }
 
             NodeClassFilter pgnf = new NodeClassFilter();
@@ -122,12 +124,16 @@ public class ClientWithResponseHandler {
             data.add(entity);
             entity.populate(tag);
         }
+
+        public List<DataEntity> getData() {
+            return this.data;
+        }
     }
 
     protected static class DataEntity {
         protected String title;
         protected String idref;
-        protected String hachuuu;
+        protected String yaHachuuu;
 
         protected static final NodeFilter DateFilter = new AndFilter(new NodeFilter[]{
             new NodeClassFilter(Div.class),
@@ -139,10 +145,12 @@ public class ClientWithResponseHandler {
             new HasAttributeFilter("class", "t_i_time")
         });
 
-        protected static final NodeFilter HachuuFilter = new AndFilter(new NodeFilter[]{
+        protected static final NodeFilter KhalooppoHotelkaFilter = new AndFilter(new NodeFilter[]{
             new NodeClassFilter(Div.class),
             new HasAttributeFilter("class", "l_i_price")
         });
+
+        protected static final NodeFilter KhalooppoHotelkaValueFilter = new NodeClassFilter(Span.class);
 
         protected static final NodeFilter LinkFilter = new AndFilter(new NodeFilter[]{
             new NodeClassFilter(LinkTag.class),
@@ -151,10 +159,23 @@ public class ClientWithResponseHandler {
 
         public void populate(Tag tag){
 
-            //TODO: Extract required data with static filters
+            NodeList nl = new NodeList();
 
-            tag.getTagName();
-            tag.getAttribute(null);
+            tag.collectInto(nl, LinkFilter);
+            if(nl.size() > 0){
+                LinkTag link = (LinkTag)nl.elementAt(0);
+                this.title = link.getLinkText();
+                this.idref = link.getLink();
+                nl.removeAll();
+            }
+
+            tag.collectInto(nl, KhalooppoHotelkaFilter);
+            if(nl.size() > 0){
+                Span s = (Span)nl.extractAllNodesThatMatch(KhalooppoHotelkaValueFilter, true).elementAt(0);
+                if(s != null){
+                    this.yaHachuuu = s.getStringText().replace("&nbsp;", "");
+                }
+            }
         }
     }
 }

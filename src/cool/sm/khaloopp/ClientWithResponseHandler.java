@@ -1,8 +1,5 @@
 package cool.sm.khaloopp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,17 +10,18 @@ import org.htmlparser.NodeFilter;
 import org.htmlparser.Parser;
 import org.htmlparser.Tag;
 import org.htmlparser.filters.AndFilter;
+import org.htmlparser.filters.CssSelectorNodeFilter;
 import org.htmlparser.filters.HasAttributeFilter;
-import org.htmlparser.filters.HasParentFilter;
-import org.htmlparser.filters.NodeClassFilter;
 import org.htmlparser.filters.TagNameFilter;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.lexer.Page;
-import org.htmlparser.tags.Div;
 import org.htmlparser.tags.LinkTag;
-import org.htmlparser.tags.Span;
 import org.htmlparser.util.NodeList;
-import org.htmlparser.visitors.NodeVisitor;
+
+import cool.sm.khaloopp.data.DataListVisitor;
+import cool.sm.khaloopp.data.HasAttributeContainingTextFilter;
+import cool.sm.khaloopp.data.PaginatorVisitor;
+import cool.sm.khaloopp.data.entity.KhalooppoEntity;
 
 /**
  * This example demonstrates the use of the {@link ResponseHandler} to simplify
@@ -52,12 +50,8 @@ public class ClientWithResponseHandler {
 
             Parser parser = new Parser(new Lexer(page));
 
-            TagNameFilter tnf = new TagNameFilter();
-            tnf.setName ("DIV");
-
-            HasAttributeFilter attf = new HasAttributeFilter();
-            attf.setAttributeName ("class");
-            attf.setAttributeValue ("t_i_i");
+            TagNameFilter tnf = new TagNameFilter("DIV");
+            HasAttributeContainingTextFilter attf = new HasAttributeContainingTextFilter("class", "t_i_i");
 
             AndFilter filter = new AndFilter();
             filter.setPredicates(new NodeFilter[]{
@@ -67,16 +61,15 @@ public class ClientWithResponseHandler {
 
             NodeList data = parser.extractAllNodesThatMatch(filter);
 
-            //System.out.println(data.toHtml());
-            DataVisitor visitor = new DataVisitor();
+            DataListVisitor visitor = new DataListVisitor();
             for (int i = 0; i < data.size(); i++) {
                 visitor.visitTag((Tag)data.elementAt(i));
             }
 
-            for(DataEntity de : visitor.getData()){
-                System.out.printf("%s, Hotelka: %s, ID: %s\n", de.title, de.yaHachuuu, de.idref);
+            for(KhalooppoEntity de : visitor.getPageData()){
+                System.out.printf("> %s, Hotelka: %s, ID: %s\n", de.getTitle(), de.getYaHachuuu(), de.getIdref());
             }
-
+/*
             NodeClassFilter pgnf = new NodeClassFilter();
             pgnf.setMatchClass(LinkTag.class);
 
@@ -94,15 +87,13 @@ public class ClientWithResponseHandler {
                 pgatt1f,
                 pgatt2f
             });
+*/
+            parser.reset();
+            NodeList pgdata = parser.extractAllNodesThatMatch(PaginatorVisitor.PaginatorFilter);
+            PaginatorVisitor pv = new PaginatorVisitor();
+            pgdata.visitAllNodesWith(pv);
 
-            NodeList pgdata = parser.extractAllNodesThatMatch(pgatt2f);
-            if(pgdata.size() > 0){
-                LinkTag pgntag = (LinkTag)pgdata.elementAt(0);
-                System.out.println(pgntag.getLinkText());
-                System.out.println(pgntag.getLink());
-            } else {
-                System.out.println("List on single page");
-            }
+            System.out.printf("List on %d page(s)", pv.getPages());
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -111,71 +102,6 @@ public class ClientWithResponseHandler {
             // shut down the connection manager to ensure
             // immediate deallocation of all system resources
             httpclient.getConnectionManager().shutdown();
-        }
-    }
-
-    protected static class DataVisitor extends NodeVisitor {
-
-        protected List<DataEntity> data = new ArrayList<DataEntity>();
-
-        @Override
-        public void visitTag(Tag tag) {
-            DataEntity entity = new DataEntity();
-            data.add(entity);
-            entity.populate(tag);
-        }
-
-        public List<DataEntity> getData() {
-            return this.data;
-        }
-    }
-
-    protected static class DataEntity {
-        protected String title;
-        protected String idref;
-        protected String yaHachuuu;
-
-        protected static final NodeFilter DateFilter = new AndFilter(new NodeFilter[]{
-            new NodeClassFilter(Div.class),
-            new HasAttributeFilter("class", "t_i_date")
-        });
-
-        protected static final NodeFilter TimeFilter = new AndFilter(new NodeFilter[]{
-            new NodeClassFilter(Span.class),
-            new HasAttributeFilter("class", "t_i_time")
-        });
-
-        protected static final NodeFilter KhalooppoHotelkaFilter = new AndFilter(new NodeFilter[]{
-            new NodeClassFilter(Div.class),
-            new HasAttributeFilter("class", "l_i_price")
-        });
-
-        protected static final NodeFilter KhalooppoHotelkaValueFilter = new NodeClassFilter(Span.class);
-
-        protected static final NodeFilter LinkFilter = new AndFilter(new NodeFilter[]{
-            new NodeClassFilter(LinkTag.class),
-            new HasParentFilter(new HasAttributeFilter("class", "t_i_title"), true)
-        });
-
-        public void populate(Tag tag){
-
-            NodeList nl = new NodeList();
-
-            tag.collectInto(nl, LinkFilter);
-            if(nl.size() > 0){
-                LinkTag link = (LinkTag)nl.elementAt(0);
-                this.title = link.getLinkText();
-                this.idref = link.getLink();
-                nl.removeAll();
-            }
-
-            tag.collectInto(nl, KhalooppoHotelkaFilter);
-            if(nl.size() > 0){
-                Span s = (Span)nl.extractAllNodesThatMatch(KhalooppoHotelkaValueFilter, true).elementAt(0);
-                if(s != null){
-                    this.yaHachuuu = s.getStringText().replace("&nbsp;", "");
-                }
-            }
         }
     }
 }

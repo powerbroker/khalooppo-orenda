@@ -5,9 +5,15 @@ import org.htmlparser.Tag;
 import org.htmlparser.filters.AndFilter;
 import org.htmlparser.filters.NodeClassFilter;
 import org.htmlparser.tags.LinkTag;
+import org.htmlparser.tags.ParagraphTag;
 import org.htmlparser.visitors.NodeVisitor;
 
 public class PaginatorVisitor extends NodeVisitor {
+
+    public static final NodeFilter DataBlockFilter = new AndFilter(new NodeFilter[]{
+        new NodeClassFilter(ParagraphTag.class),
+        new HasAttributeContainingTextFilter("class", "p_l_p")
+    });
 
     public static final AndFilter PaginatorFilter = new AndFilter(new NodeFilter[]{
         new NodeClassFilter(LinkTag.class),

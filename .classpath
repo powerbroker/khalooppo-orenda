@@ -4,12 +4,21 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="/home/kdv/work/lib/httpcomponents-client-4.2.1/org.apache.httpcomponents.httpclient_4.2.1.jar" sourcepath="/home/share/HttpComponents/httpcomponents-client-4.2.1-src.zip"/>
 	<classpathentry kind="lib" path="/home/kdv/work/lib/httpcomponents-core-4.2.1/org.apache.httpcomponents.httpcore_4.2.1.jar"/>
-	<classpathentry kind="lib" path="/home/kdv/work/lib/commons/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/commons/commons-logging-1.1.1.jar" sourcepath="/home/kdv/work/lib/commons/commons-logging-1.1.1-sources.jar"/>
 	<classpathentry kind="lib" path="/home/kdv/work/lib/HTMLParser-2.0-SNAPSHOT/lib/htmlparser.jar" sourcepath="/home/share/Jabba/HTML/HTMLParser-2.0-SNAPSHOT-src.zip">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/home/share/Jabba/HTML/HTMLParser-2.0-SNAPSHOT-doc.zip!/HTMLParser-2.0-SNAPSHOT/docs/javadoc"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/hsqldb-2.2.6.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/slf4j-api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/jta-1.1.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/slf4j-jdk14-1.6.6.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/javassist-3.14.0-ga.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry kind="lib" path="/home/kdv/work/lib/HTMLParser-2.0-SNAPSHOT/lib/htmllexer.jar" sourcepath="/home/share/Jabba/HTML/HTMLParser-2.0-SNAPSHOT-src.zip"/>
 </classpath>

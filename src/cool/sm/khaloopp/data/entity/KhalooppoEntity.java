@@ -1,17 +1,31 @@
 package cool.sm.khaloopp.data.entity;
 
-public class KhalooppoEntity {
-    protected String idref;
+import javax.persistence.Entity;
+
+@Entity
+public class KhalooppoEntity extends NotifierTarget{
+
+    protected long number;
+    protected String link;
     protected String title;
+    protected String khaloopper;
     protected String yaHachuuu;
+    protected String location;
     protected String description;
     protected String contact;
-    
-    public String getIdref() {
-        return this.idref;
+    protected String posted;
+
+    public long getNumber() {
+        return this.number;
     }
-    public void setIdref(String idref) {
-        this.idref = idref;
+    public void setNumber(long number) {
+        this.number = number;
+    }
+    public String getLink() {
+        return this.link;
+    }
+    public void setLink(String idref) {
+        this.link = idref;
     }
     public String getTitle() {
         return this.title;
@@ -36,5 +50,23 @@ public class KhalooppoEntity {
     }
     public void setContact(String contact) {
         this.contact = contact;
+    }
+    public String getKhaloopper() {
+        return this.khaloopper;
+    }
+    public void setKhaloopper(String khaloopper) {
+        this.khaloopper = khaloopper;
+    }
+    public String getLocation() {
+        return this.location;
+    }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+    public String getPosted() {
+        return this.posted;
+    }
+    public void setPosted(String posted) {
+        this.posted = posted;
     }
 }

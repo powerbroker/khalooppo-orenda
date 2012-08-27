@@ -1,6 +1,7 @@
 package cool.sm.khaloopp.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.htmlparser.NodeFilter;
@@ -16,8 +17,19 @@ import org.htmlparser.util.NodeList;
 import org.htmlparser.visitors.NodeVisitor;
 
 import cool.sm.khaloopp.data.entity.KhalooppoEntity;
+import cool.sm.khaloopp.data.entity.NotifierTarget;
 
 public class DataListVisitor extends NodeVisitor {
+
+    public static final NodeFilter DataBlockFilter = new AndFilter(new NodeFilter[]{
+        new NodeClassFilter(Div.class),
+        new HasAttributeContainingTextFilter("class", "l_i")
+    });
+
+    public static final NodeFilter DataEntryFilter = new AndFilter(new NodeFilter[]{
+        new NodeClassFilter(Div.class),
+        new HasAttributeContainingTextFilter("class", "t_i_i")
+    });
 
     protected static final NodeFilter DateFilter = new AndFilter(new NodeFilter[]{
         new NodeClassFilter(Div.class),
@@ -53,7 +65,11 @@ public class DataListVisitor extends NodeVisitor {
         if(nl.size() > 0){
             LinkTag link = (LinkTag)nl.elementAt(0);
             entity.setTitle(link.getLinkText().trim());
-            entity.setIdref(link.getLink());
+            String hlink = link.getLink();
+            entity.setLink(hlink);
+            entity.setNumber(Long.decode(hlink.substring(hlink.lastIndexOf('_') + 1)));
+            entity.setState(NotifierTarget.State.New);
+            entity.setCaptured(new Date());
             nl.removeAll();
         }
 

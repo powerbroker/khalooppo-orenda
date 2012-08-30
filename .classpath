@@ -19,6 +19,7 @@
 	<classpathentry kind="lib" path="/home/kdv/work/lib/jta-1.1.jar"/>
 	<classpathentry kind="lib" path="/home/kdv/work/lib/slf4j-jdk14-1.6.6.jar"/>
 	<classpathentry kind="lib" path="/home/kdv/work/lib/javassist-3.14.0-ga.jar"/>
+	<classpathentry kind="lib" path="/home/kdv/work/lib/mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry kind="lib" path="/home/kdv/work/lib/HTMLParser-2.0-SNAPSHOT/lib/htmllexer.jar" sourcepath="/home/share/Jabba/HTML/HTMLParser-2.0-SNAPSHOT-src.zip"/>
 </classpath>
